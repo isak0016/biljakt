@@ -1,7 +1,8 @@
 from blocket_api import BlocketAPI, Region
-from scrapetest import tradera_scrape
+from traderascraper import tradera_scrape
+from blocketscraper import blocket_scrape_advanced, blocket_scrape_simple
 
-api = BlocketAPI("PLACE KEY HERE")
+api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
@@ -12,6 +13,7 @@ def advanced_search():
     card_list.clear()
     
     if request.method ==  "POST":
+        card_list.clear()
         make_pre_cap = request.form.get('brand')
         fuel_pre_cap = request.form.get('fuel')
         chassi_pre_cap = request.form.get('chassi')
@@ -24,31 +26,9 @@ def advanced_search():
         fuel_search = fuel_pre_cap.capitalize()
         chassi_search = chassi_pre_cap.capitalize()
         
-        search_result = api.motor_search(
-            make=[make_search],
-            fuel=[fuel_search],
-            chassi=[chassi_search],
-            price=(price_low, price_high),
-            page=1
-        #    make=["Audi", "Ford"],
-        #    fuel=["Diesel"],
-        #    chassi=["Cab"],
-        #    price=(50000, 100000),
-        #    page=1,
-            )
-        
-
-        for x in search_result['cars']:
-            title = x.get('heading', '')
-            pris = x.get('price', {}).get('amount', '')
-            link = x.get('link', '')
-            card_list.append({
-                "title": title,
-                "pris": pris,
-                "link": link
-            })
-            
+        blocket_results = blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high)
         tradera_results = tradera_scrape(make_search)
+        card_list.extend(blocket_results)
         card_list.extend(tradera_results)
 
     return render_template("scraper.html", title="scraper", card_list = card_list)
@@ -59,23 +39,12 @@ def simple_search():
     if request.method ==  "POST":
         card_list.clear()
         s_search = request.form.get('simple_search')
-        search_results = api.custom_search(s_search)
-
-        for x in search_results['data']:
-            title = x.get('subject', '')
-            pris = x.get('price', {}).get('value', '')
-            link = x.get('share_url', '')
-            card_list.append({
-                "title": title,
-                "pris": pris,
-                "link": link
-            })
-
+        
+        blocket_results = blocket_scrape_simple(s_search)
         tradera_results = tradera_scrape(s_search)
+        card_list.extend(blocket_results)
         card_list.extend(tradera_results)
-
-
-
+        
     return render_template("scraper.html", title="scraper", card_list = card_list)
 
 

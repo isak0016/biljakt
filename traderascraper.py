@@ -14,7 +14,6 @@ def tradera_scrape(brand):
     tradera_priser = tradera_doc.find_all("span", {"class": "text-nowrap font-weight-bold font-hansen pr-1"}) 
     
     for pris in tradera_priser:
-        print("1")
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
         if parent and parent.has_attr("href"):
