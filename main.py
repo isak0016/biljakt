@@ -1,8 +1,7 @@
-from blocket_api import BlocketAPI, Region
 from traderascraper import tradera_scrape
 from blocketscraper import blocket_scrape_advanced, blocket_scrape_simple
+from kvdscraper import kvd_scrape_simple, kvd_scrape_advanced
 
-api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
@@ -28,8 +27,10 @@ def advanced_search():
         
         blocket_results = blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high)
         tradera_results = tradera_scrape(make_search)
+        kvd_results = kvd_scrape_advanced(make_search, fuel_search, price_low, price_high)
         card_list.extend(blocket_results)
         card_list.extend(tradera_results)
+        card_list.extend(kvd_results)
 
     return render_template("scraper.html", title="scraper", card_list = card_list)
 
@@ -42,8 +43,10 @@ def simple_search():
         
         blocket_results = blocket_scrape_simple(s_search)
         tradera_results = tradera_scrape(s_search)
+        kvd_results = kvd_scrape_simple(s_search)
         card_list.extend(blocket_results)
         card_list.extend(tradera_results)
+        card_list.extend(kvd_results)
         
     return render_template("scraper.html", title="scraper", card_list = card_list)
 

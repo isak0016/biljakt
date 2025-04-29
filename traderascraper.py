@@ -17,7 +17,7 @@ def tradera_scrape(brand):
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
         if parent and parent.has_attr("href"):
-            link = "https://www.tradera.com/" + parent["href"]
+            link = "https://www.tradera.com" + parent["href"]
             title = parent["title"]
             
             card_list.append({
