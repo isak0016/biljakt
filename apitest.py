@@ -1,14 +1,14 @@
 from blocket_api import BlocketAPI, Region
 from scrapetest import tradera_scrape
 
-api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
+api = BlocketAPI("PLACE KEY HERE")
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
 card_list = []
 @app.route("/scraper", methods=["GET", "POST"])
-def api_test_search():
+def advanced_search():
     card_list.clear()
     
     if request.method ==  "POST":
@@ -39,20 +39,49 @@ def api_test_search():
         
 
         for x in search_result['cars']:
-                #print(x)
             title = x.get('heading', '')
             pris = x.get('price', {}).get('amount', '')
             link = x.get('link', '')
             card_list.append({
-                                "title": title,
-                                "pris": pris,
-                                "link": link
-                                })
+                "title": title,
+                "pris": pris,
+                "link": link
+            })
             
         tradera_results = tradera_scrape(make_search)
         card_list.extend(tradera_results)
 
     return render_template("scraper.html", title="scraper", card_list = card_list)
+
+@app.route("/scraper/simple-search", methods=["GET", "POST"])
+def simple_search():
+    card_list.clear()
+    if request.method ==  "POST":
+        card_list.clear()
+        s_search = request.form.get('simple_search')
+        search_results = api.custom_search(s_search)
+
+        for x in search_results['data']:
+            title = x.get('subject', '')
+            pris = x.get('price', {}).get('value', '')
+            link = x.get('share_url', '')
+            card_list.append({
+                "title": title,
+                "pris": pris,
+                "link": link
+            })
+
+        tradera_results = tradera_scrape(s_search)
+        card_list.extend(tradera_results)
+
+
+
+    return render_template("scraper.html", title="scraper", card_list = card_list)
+
+
+
+
+
 
 if __name__ == "__main__":
     app.run(debug= True, port=5502)
