@@ -1,7 +1,7 @@
 from blocket_api import BlocketAPI, Region
-#from scrapetest import
+from scrapetest import tradera_scrape
 
-api = BlocketAPI("PUT KEY HERE")
+api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
@@ -36,8 +36,8 @@ def api_test_search():
         #    price=(50000, 100000),
         #    page=1,
             )
-       
         
+
         for x in search_result['cars']:
                 #print(x)
             title = x.get('heading', '')
@@ -48,6 +48,10 @@ def api_test_search():
                                 "pris": pris,
                                 "link": link
                                 })
+            
+        tradera_results = tradera_scrape(make_search)
+        card_list.extend(tradera_results)
+
     return render_template("scraper.html", title="scraper", card_list = card_list)
 
 if __name__ == "__main__":
