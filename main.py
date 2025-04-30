@@ -13,6 +13,7 @@ def advanced_search():
     
     if request.method ==  "POST":
         card_list.clear()
+        
         make_pre_cap = request.form.get('brand')
         fuel_pre_cap = request.form.get('fuel')
         chassi_pre_cap = request.form.get('chassi')

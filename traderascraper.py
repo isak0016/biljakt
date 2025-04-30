@@ -9,13 +9,16 @@ def tradera_scrape(brand):
 
     tradera_result = requests.get(tradera_url)
 
-    tradera_doc = BeautifulSoup(tradera_result.text, "html.parser")
+    soup = BeautifulSoup(tradera_result.text, "html.parser")
 
-    tradera_priser = tradera_doc.find_all("span", {"class": "text-nowrap font-weight-bold font-hansen pr-1"}) 
+    tradera_priser = soup.find_all("span", {"class": "text-nowrap font-weight-bold font-hansen pr-1"}) 
     
     for pris in tradera_priser:
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
+        img_tag = parent.find("source", {"type": "image/webp"})
+        srcset = img_tag.get("srcset", "")
+        img_url = srcset.split(",")[0].strip().split(" ")[0] if srcset else ""
         if parent and parent.has_attr("href"):
             link = "https://www.tradera.com" + parent["href"]
             title = parent["title"]
@@ -23,7 +26,8 @@ def tradera_scrape(brand):
             card_list.append({
                     "title": title,
                     "pris": pris_clean,
-                    "link": link
+                    "link": link,
+                    "img": img_url
                 })
     return card_list
 

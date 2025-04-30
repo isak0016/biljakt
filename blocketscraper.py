@@ -12,17 +12,23 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
         
     try:
         for x in search_result['cars']:
+            
             title = x.get('heading', '')
             pris = x.get('price', {}).get('amount', '')
             link = x.get('link', '')
+            images = x.get('car', {}).get('images', [])
+            img = images[0].get('image', '') if images else x.get('thumbnail', '')
+
             card_list.append({
                 "title": title,
                 "pris": pris,
-                "link": link
+                "link": link,
+                "img": img
             })
+            
     except:
         print("no matches on blocket for this search")
-        
+
     return card_list
 
 def blocket_scrape_simple(s_search):
@@ -32,10 +38,16 @@ def blocket_scrape_simple(s_search):
         title = x.get('subject', '')
         pris = x.get('price', {}).get('value', '')
         link = x.get('share_url', '')
+
+        images = x.get('images', [])
+        img = images[0].get('url', '') if images else ''
+
         card_list.append({
             "title": title,
             "pris": pris,
-            "link": link
+            "link": link,
+            "img": img
         })
 
+        
     return card_list
