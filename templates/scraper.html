@@ -11,14 +11,16 @@
         <form action="/scraper/simple-search" method="POST">
             <input type="text" placeholder="simple search" name="simple_search">
             <button type="submit">Search</button>
+            <input type="hidden" name="min_input" class="hidden-min">
+            <input type="hidden" name="max_input" class="hidden-max">
         </form>
         <form action="/scraper" method="POST">
             <input type="text" placeholder="bilmärke" name="brand"></input>
             <input type="text" placeholder="bränsletyp" name="fuel"></input>
             <input type="text" placeholder="chassi" name="chassi"></input>
-            <input type="text" placeholder="lägsta pris" name="price_low"></input>
-            <input type="text" placeholder="högsta pris" name="price_high"></input> <!-- put in double sclassed slclasser for price-->
             <button type="submit">Search</button>
+            <input type="hidden" name="min_input" class="hidden-min">
+            <input type="hidden" name="max_input" class="hidden-max">
         </form>
         <form action="/scraper/sort" method="POST">
             <select name="sort_order" onchange="this.form.submit()">
@@ -27,6 +29,30 @@
                 <option value="desc" {% if request.form.get('sort_order') == 'desc' %}selected{% endif %}>Högst först</option>
             </select>
         </form>
+    <div class="double-slider-box">
+        <h3 class="range-title">price range slider</h3>
+        <div class="range-slider">
+            <span class="slider-track"></span>
+            <input type="range" name="min_val" class="min-val" min="1000" max="200000" value="1000" oninput="slideMin()">
+            <input type="range" name="max_val" class="max-val" min="1000" max="200000" value="200000" oninput="slideMax()">
+            <div class="tooltip min-tooltip"></div>
+            <div class="tooltip max-tooltip"></div>
+        </div>
+        <div class="input-box">
+            <div class="min-box">
+                <div class="input-wrap">
+                    <span class="input-addon">kr</span>
+                    <input type="text" name="min_input" class="input-field min-input">
+                </div>
+            </div>
+            <div class="max-box">
+                <div class="input-wrap">
+                    <span class="input-addon">kr</span>
+                    <input type="text" name="max_input" class="input-field max-input">
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card-container">
         {% if card_list %}
             {% for item in card_list %}
@@ -45,4 +71,5 @@
             {% endfor %}
         {% endif%}
     </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>

@@ -19,6 +19,12 @@ def clean_price_to_int(price):
     cleaned = re.sub(r"[^\d]", "", price)
     return int(cleaned) if cleaned else 0
 
+def price_limit_cutoff(price_low, price_high, card_list):
+    return [
+        card for card in card_list
+        if price_low <= card['pris'] <= price_high
+    ]
+
 @app.route("/scraper/sort", methods=["GET", "POST"])
 def card_list_sorter():
     
@@ -42,8 +48,8 @@ def advanced_search():
         make_pre_cap = request.form.get('brand')
         fuel_pre_cap = request.form.get('fuel')
         chassi_pre_cap = request.form.get('chassi')
-        price_low = int(request.form.get('price_low'))
-        price_high = int(request.form.get('price_high'))
+        price_low = int(request.form.get('min_input'))
+        price_high = int(request.form.get('max_input'))
         if make_pre_cap.upper() != "BMW" or "BYD" or "DFSK" or "DS" or "GMC" or "LEVC" or "MAN" or "MG" or "NIO" or "SEAT" or "XPENG" or "AMC" or "DKW" or "VW" or "ABT":
             make_search = make_pre_cap.capitalize()
         else: 
@@ -58,6 +64,11 @@ def advanced_search():
         add_unique_results(tradera_results)
         add_unique_results(kvd_results)
 
+        for card in card_list:
+            card["pris"] = clean_price_to_int(card["pris"])
+
+        card_list[:] = price_limit_cutoff(price_low, price_high, card_list)
+
     return render_template("scraper.html", title="scraper", card_list = card_list)
 
 @app.route("/scraper/simple-search", methods=["GET", "POST"])
@@ -66,6 +77,8 @@ def simple_search():
     if request.method ==  "POST":
         card_list.clear()
         s_search = request.form.get('simple_search')
+        price_low = int(request.form.get('min_input'))
+        price_high = int(request.form.get('max_input'))
         
         blocket_results = blocket_scrape_simple(s_search)
         tradera_results = tradera_scrape(s_search)
@@ -73,13 +86,14 @@ def simple_search():
         add_unique_results(blocket_results)
         add_unique_results(tradera_results)
         add_unique_results(kvd_results)
+
+        for card in card_list:
+            card["pris"] = clean_price_to_int(card["pris"])
+
+        card_list[:] = price_limit_cutoff(price_low, price_high, card_list)
+
         
     return render_template("scraper.html", title="scraper", card_list = card_list)
-
-
-
-
-
 
 if __name__ == "__main__":
     app.run(debug= True, port=5502)
