@@ -5,7 +5,7 @@
 </head>
 <body>
     
-    <div id="logo">
+    <div class="logo">
         <a>logo</a>    
     </div>
         <form action="/scraper/simple-search" method="POST">
@@ -17,23 +17,30 @@
             <input type="text" placeholder="bränsletyp" name="fuel"></input>
             <input type="text" placeholder="chassi" name="chassi"></input>
             <input type="text" placeholder="lägsta pris" name="price_low"></input>
-            <input type="text" placeholder="högsta pris" name="price_high"></input> <!-- put in double sided slider for price-->
-            <select name="sort_order">
-                <option value="asc">Lägst först</option>
-                <option value="desc">Högst först</option>
-            </select>
+            <input type="text" placeholder="högsta pris" name="price_high"></input> <!-- put in double sclassed slclasser for price-->
             <button type="submit">Search</button>
         </form>
-        
-    <div id="list">
+        <form action="/scraper/sort" method="POST">
+            <select name="sort_order" onchange="this.form.submit()">
+                <option value="" disabled selected>Sort by price</option>
+                <option value="asc" {% if request.form.get('sort_order') == 'asc' %}selected{% endif %}>Lägst först</option>
+                <option value="desc" {% if request.form.get('sort_order') == 'desc' %}selected{% endif %}>Högst först</option>
+            </select>
+        </form>
+    <div class="card-container">
         {% if card_list %}
             {% for item in card_list %}
-                <div id="card">
-                    {{ item.title }}
-                    <b>{{ item.pris }}</b>
-                    {{ item.img }}
-                    <a href="{{ item.link }}" target="_blank">View Listing</a>
-                
+                <div class="card">
+                    <div class="img-container">
+                        <img src="{{ item.img }}"  height="100">
+                    </div>
+                    <div class="text-container">
+                        <h3>{{ item.title }}</h3>
+                    </div>
+                    <div class="info-footer">
+                        <b>{{ item.pris }} kr</b>
+                        <a href="{{ item.link }}" target="_blank">View Listing</a>
+                    </div>
                 </div>
             {% endfor %}
         {% endif%}

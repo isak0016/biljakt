@@ -1,19 +1,44 @@
 from traderascraper import tradera_scrape
 from blocketscraper import blocket_scrape_advanced, blocket_scrape_simple
 from kvdscraper import kvd_scrape_simple, kvd_scrape_advanced
+import re
 
 from flask import Flask, jsonify, render_template, request
 
 app = Flask(__name__)
 
 card_list = []
+
+def add_unique_results(results):
+    for result in results:
+        if not any(card['link'] == result['link'] for card in card_list):
+            card_list.append(result)
+
+def clean_price_to_int(price):
+    price = str(price)
+    cleaned = re.sub(r"[^\d]", "", price)
+    return int(cleaned) if cleaned else 0
+
+@app.route("/scraper/sort", methods=["GET", "POST"])
+def card_list_sorter():
+    
+    for card in card_list:
+        card["pris"] = clean_price_to_int(card["pris"])
+    
+    if request.form.get("sort_order") == 'asc':
+        card_list.sort(key=lambda x: x["pris"])
+    elif request.form.get("sort_order") == 'desc':
+        card_list.sort(key=lambda x: x["pris"], reverse=True)
+
+    return render_template("scraper.html", card_list = card_list)
+
 @app.route("/scraper", methods=["GET", "POST"])
 def advanced_search():
     card_list.clear()
     
     if request.method ==  "POST":
         card_list.clear()
-        
+
         make_pre_cap = request.form.get('brand')
         fuel_pre_cap = request.form.get('fuel')
         chassi_pre_cap = request.form.get('chassi')
@@ -29,9 +54,9 @@ def advanced_search():
         blocket_results = blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high)
         tradera_results = tradera_scrape(make_search)
         kvd_results = kvd_scrape_advanced(make_search, fuel_search, price_low, price_high)
-        card_list.extend(blocket_results)
-        card_list.extend(tradera_results)
-        card_list.extend(kvd_results)
+        add_unique_results(blocket_results)
+        add_unique_results(tradera_results)
+        add_unique_results(kvd_results)
 
     return render_template("scraper.html", title="scraper", card_list = card_list)
 
@@ -45,9 +70,9 @@ def simple_search():
         blocket_results = blocket_scrape_simple(s_search)
         tradera_results = tradera_scrape(s_search)
         kvd_results = kvd_scrape_simple(s_search)
-        card_list.extend(blocket_results)
-        card_list.extend(tradera_results)
-        card_list.extend(kvd_results)
+        add_unique_results(blocket_results)
+        add_unique_results(tradera_results)
+        add_unique_results(kvd_results)
         
     return render_template("scraper.html", title="scraper", card_list = card_list)
 

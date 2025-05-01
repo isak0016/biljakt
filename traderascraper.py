@@ -4,6 +4,7 @@ import requests
 card_list = []
 
 def tradera_scrape(brand):
+    card_list.clear()
     
     tradera_url = "https://www.tradera.com/category/1001?af-car_brand="+brand+"&sortBy=HighestPrice"
 

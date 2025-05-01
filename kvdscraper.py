@@ -25,6 +25,7 @@ def scroll_to_load_all_cards(driver, pause_time=1, step=300, max_scrolls=200):
         if total_scrolled >= new_height:
             break
 def kvd_scrape_simple(brand):
+    card_list.clear()
     options = Options()
     options.add_argument("--headless=new")
     driver = webdriver.Chrome(options=options) 
@@ -50,8 +51,6 @@ def kvd_scrape_simple(brand):
 
 
     soup = BeautifulSoup(driver.page_source, "html.parser")
-
-    card_list = []
 
     cards = soup.find_all("a", {"data-testid": "product-card"})
 
@@ -82,6 +81,7 @@ def kvd_scrape_simple(brand):
     return card_list
 
 def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
+    card_list.clear()
     options = Options()
     options.add_argument("--headless=new")
     driver = webdriver.Chrome(options=options) 

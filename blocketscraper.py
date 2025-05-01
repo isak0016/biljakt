@@ -2,6 +2,7 @@ from blocket_api import BlocketAPI, Region
 api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
 card_list = []
 def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high):
+    card_list.clear()
     search_result = api.motor_search(
             make=[make_search],
             fuel=[fuel_search],
@@ -32,6 +33,7 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
     return card_list
 
 def blocket_scrape_simple(s_search):
+    card_list.clear()
     search_results = api.custom_search(s_search)
 
     for x in search_results['data']:
