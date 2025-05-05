@@ -13,18 +13,22 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
         
     try:
         for x in search_result['cars']:
-            
+            print(x)
             title = x.get('heading', '')
             pris = x.get('price', {}).get('amount', '')
             link = x.get('link', '')
             images = x.get('car', {}).get('images', [])
             img = images[0].get('image', '') if images else x.get('thumbnail', '')
 
+            location_list = x.get('location', [])
+            location_str = ", ".join(loc.get('name', '') for loc in location_list)
+
             card_list.append({
                 "title": title,
                 "pris": pris,
                 "link": link,
-                "img": img
+                "img": img,
+                "location": location_str
             })
             
     except:
@@ -44,11 +48,15 @@ def blocket_scrape_simple(s_search):
         images = x.get('images', [])
         img = images[0].get('url', '') if images else ''
 
+        location_list = x.get('location', [])
+        location_str = ", ".join(loc.get('name', '') for loc in location_list)
+
         card_list.append({
             "title": title,
             "pris": pris,
             "link": link,
-            "img": img
+            "img": img,
+            "location": location_str 
         })
 
         
