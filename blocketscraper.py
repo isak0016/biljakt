@@ -20,8 +20,13 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
             images = x.get('car', {}).get('images', [])
             img = images[0].get('image', '') if images else x.get('thumbnail', '')
 
-            location_list = x.get('location', [])
-            location_str = ", ".join(loc.get('name', '') for loc in location_list)
+            
+
+            loc = x.get('car', {}).get('location', {})
+            region = loc.get('region', '')
+            municipality = loc.get('municipality', '')
+            location_str = ", ".join(part for part in [region, municipality] if part)
+           
 
             card_list.append({
                 "title": title,
