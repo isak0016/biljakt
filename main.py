@@ -13,10 +13,6 @@ import re
 import os
 from dotenv import load_dotenv
 
-
-
-
-
 app = Flask(__name__)
 load_dotenv()
 card_list = []
@@ -90,7 +86,6 @@ def simple_search():
         price_high = int(request.form.get('max_input', 10**9))
 
         card_list[:] = run_combined_search(s_search, price_low, price_high)
-        auto_service()
 
     return render_template("scraper.html", title="scraper", card_list=card_list)
 
@@ -170,7 +165,6 @@ def send_email(user_email, new_items_for_user):
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = user_email
 
-    # Configure your SMTP server
     try:
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
