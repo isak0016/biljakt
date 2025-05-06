@@ -1,6 +1,10 @@
 from blocket_api import BlocketAPI, Region
 from db import generate_token, save_new_token_if_unseen
-api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
+from dotenv import load_dotenv
+import os
+load_dotenv()
+BLOCKET_API = os.getenv("BLOCKET_API", "")
+api = BlocketAPI(BLOCKET_API)
 card_list = []
 def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high):
     card_list.clear()
