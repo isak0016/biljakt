@@ -1,4 +1,4 @@
-from traderascraper import tradera_scrape
+from traderascraper import tradera_scrape, tradera_scrape_single_thread
 from blocketscraper import blocket_scrape_advanced, blocket_scrape_simple
 from kvdscraper import kvd_scrape_simple, kvd_scrape_advanced
 import re
@@ -27,10 +27,6 @@ def price_limit_cutoff(price_low, price_high, card_list):
 
 @app.route("/scraper/sort", methods=["GET", "POST"])
 def card_list_sorter():
-    
-    for card in card_list:
-        card["pris"] = clean_price_to_int(card["pris"])
-    
     if request.form.get("sort_order") == 'asc':
         card_list.sort(key=lambda x: x["pris"])
     elif request.form.get("sort_order") == 'desc':
@@ -82,6 +78,7 @@ def simple_search():
         
         blocket_results = blocket_scrape_simple(s_search)
         tradera_results = tradera_scrape(s_search)
+        #tradera_results = tradera_scrape_single_thread(s_search)
         kvd_results = kvd_scrape_simple(s_search)
         add_unique_results(blocket_results)
         add_unique_results(tradera_results)
