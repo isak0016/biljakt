@@ -1,13 +1,17 @@
 from traderascraper import tradera_scrape, tradera_scrape_single_thread
 from blocketscraper import blocket_scrape_advanced, blocket_scrape_simple
 from kvdscraper import kvd_scrape_simple, kvd_scrape_advanced
+from flask import Flask, jsonify, render_template, request
+from db import init_db
 import re
 
-from flask import Flask, jsonify, render_template, request
+
+
 
 app = Flask(__name__)
 
 card_list = []
+init_db()
 
 def add_unique_results(results):
     for result in results:

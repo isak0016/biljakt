@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+from db import generate_token, save_new_token_if_unseen
 import requests
 import time
 
@@ -55,6 +56,8 @@ def kvd_scrape_simple(brand):
     cards = soup.find_all("a", {"data-testid": "product-card"})
 
     for card in cards:
+        token = generate_token(card)
+            
         title_tag = card.find("p", {"class": "Title__Container-sc-1pnhtgy-0 dUjCyV"})
         subtitle_tag = card.find("p", {"class": "Subtitle__Container-sc-mtvkrl-0 dQIixS"})
         #price_tag = card.find("span", {"class": "FinancingRowItem__PriceValue-sc-t6ke1g-2 epRKgX"})
@@ -77,6 +80,8 @@ def kvd_scrape_simple(brand):
             "link": link,
             "img": img_url
         })
+
+        save_new_token_if_unseen(token, title_tag, link)
     driver.quit()
     return card_list
 
@@ -116,6 +121,9 @@ def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
     cards = soup.find_all("a", {"data-testid": "product-card"})
 
     for card in cards:
+        
+        token = generate_token(card)
+
         title_tag = card.find("p", {"class": "Title__Container-sc-1pnhtgy-0 dUjCyV"})
         subtitle_tag = card.find("p", {"class": "Subtitle__Container-sc-mtvkrl-0 dQIixS"})
         #price_tag = card.find("span", {"class": "FinancingRowItem__PriceValue-sc-t6ke1g-2 epRKgX"})
@@ -137,5 +145,7 @@ def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
             "link": link,
             "img": img_url
         })
+
+        save_new_token_if_unseen(token, title_tag, link)
     driver.quit()
     return card_list

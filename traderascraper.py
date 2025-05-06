@@ -1,14 +1,18 @@
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
+from db import generate_token, save_new_token_if_unseen
 import requests
 
 card_list = []
 
 def get_location(link): 
-    loc_link = requests.get(link)
-    loc_soup = BeautifulSoup(loc_link.text, "html.parser")
-    location_tag = loc_soup.find("p", {"class": "text_reset__qhVLr text_wrapper__g8400 size-paris text-gray-600 font-medium text-truncate my-auto"}).text
-    return location_tag if location_tag else "Unknown"
+    try:
+        loc_link = requests.get(link)
+        loc_soup = BeautifulSoup(loc_link.text, "html.parser")
+        location_tag = loc_soup.find("p", {"class": "text_reset__qhVLr text_wrapper__g8400 size-paris text-gray-600 font-medium text-truncate my-auto"}).text
+        return location_tag if location_tag else "Unknown"
+    except Exception as e:
+        return "Unknown"
 
 def tradera_scrape(brand):
     card_list.clear()
@@ -22,8 +26,8 @@ def tradera_scrape(brand):
     items = []
     
     for pris in tradera_priser:
-        count += 1
-        print(count)
+        token = generate_token(pris)
+        
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
         img_tag = parent.find("source", {"type": "image/webp"})
@@ -38,6 +42,7 @@ def tradera_scrape(brand):
                 "link": link,
                 "img": img_url
             })
+        save_new_token_if_unseen(token, title, link)
     with ThreadPoolExecutor(max_workers=20) as executor:
         locations = list(executor.map(lambda item: get_location(item["link"]), items))
 
@@ -59,6 +64,8 @@ def tradera_scrape_single_thread(brand):
     
     for pris in tradera_priser:
         
+        token = generate_token(pris)
+
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
         img_tag = parent.find("source", {"type": "image/webp"})
@@ -80,6 +87,7 @@ def tradera_scrape_single_thread(brand):
                 "img": img_url,
                 "location": location
             })
+        save_new_token_if_unseen(token, title, link)
     return card_list
 
 

@@ -1,4 +1,5 @@
 from blocket_api import BlocketAPI, Region
+from db import generate_token, save_new_token_if_unseen
 api = BlocketAPI("356c0349b77b33f46479ed2cf0145bd838692942")
 card_list = []
 def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, price_high):
@@ -13,7 +14,8 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
         
     try:
         for x in search_result['cars']:
-            print(x)
+            token = generate_token(x)
+            
             title = x.get('heading', '')
             pris = x.get('price', {}).get('amount', '')
             link = x.get('link', '')
@@ -35,6 +37,8 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
                 "img": img,
                 "location": location_str
             })
+
+            save_new_token_if_unseen(token, title, link)
             
     except:
         print("no matches on blocket for this search")
@@ -46,6 +50,8 @@ def blocket_scrape_simple(s_search):
     search_results = api.custom_search(s_search)
 
     for x in search_results['data']:
+        token = generate_token(x)
+
         title = x.get('subject', '')
         pris = x.get('price', {}).get('value', '')
         link = x.get('share_url', '')
@@ -63,6 +69,8 @@ def blocket_scrape_simple(s_search):
             "img": img,
             "location": location_str 
         })
+
+        save_new_token_if_unseen(token, title, link)
 
         
     return card_list
