@@ -1,5 +1,5 @@
-step 1: add api key tp line 2 in blocketscraper.py <br/>
-step 2: have fun :p
+used car pricerunner rip off with email notifications<br/>
+python, sqlite, html, js, beautifulsoup, selenium, smtplib, mimetext<br/>
 
-sites 2 add:
+future sites 2 scrape:
 https://www.riddermarkbil.se/kopa-bil/?types=personbil

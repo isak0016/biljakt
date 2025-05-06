@@ -1,9 +1,7 @@
 import sqlite3
-import smtplib
 import hashlib
 import os
 from datetime import datetime
-from email.mime.text import MIMEText
 from datetime import datetime
 
 
