@@ -40,7 +40,8 @@ def tradera_scrape(brand):
                 "title": title,
                 "pris": pris_clean,
                 "link": link,
-                "img": img_url
+                "img": img_url,
+                "token": token
             })
         save_new_token_if_unseen(token, title, link)
     with ThreadPoolExecutor(max_workers=20) as executor:
@@ -85,7 +86,8 @@ def tradera_scrape_single_thread(brand):
                 "pris": pris_clean,
                 "link": link,
                 "img": img_url,
-                "location": location
+                "location": location,
+                "token": token
             })
         save_new_token_if_unseen(token, title, link)
     return card_list

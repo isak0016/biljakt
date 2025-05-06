@@ -29,6 +29,11 @@
                 <option value="desc" {% if request.form.get('sort_order') == 'desc' %}selected{% endif %}>Högst först</option>
             </select>
         </form>
+        <form action="/scraper/mail-list" method="POST">
+            <input type="text" placeholder="ange email" name="email_input">
+            <input type="text" placeholder="ange sökord" name="user_search_words">
+            <button type="submit">Search</button>
+        </form>
     <div class="double-slider-box">
         <h3 class="range-title">price range slider</h3>
         <div class="range-slider">

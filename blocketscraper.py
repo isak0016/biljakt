@@ -35,7 +35,8 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
                 "pris": pris,
                 "link": link,
                 "img": img,
-                "location": location_str
+                "location": location_str,
+                "token": token
             })
 
             save_new_token_if_unseen(token, title, link)
@@ -67,7 +68,8 @@ def blocket_scrape_simple(s_search):
             "pris": pris,
             "link": link,
             "img": img,
-            "location": location_str 
+            "location": location_str,
+            "token": token
         })
 
         save_new_token_if_unseen(token, title, link)
