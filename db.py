@@ -2,7 +2,6 @@ import sqlite3
 import hashlib
 import os
 from datetime import datetime
-from datetime import datetime
 
 
 CAR_DB_PATH = "seen_items.db"
