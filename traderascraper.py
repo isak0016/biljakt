@@ -22,7 +22,6 @@ def tradera_scrape(brand):
     soup = BeautifulSoup(tradera_result.text, "html.parser")
 
     tradera_priser = soup.find_all("span", {"class": "text-nowrap font-weight-bold font-hansen pr-1"}) 
-    count = 0
     items = []
     
     for pris in tradera_priser:
@@ -44,6 +43,7 @@ def tradera_scrape(brand):
                 "token": token
             })
         save_new_token_if_unseen(token, title, link)
+
     with ThreadPoolExecutor(max_workers=20) as executor:
         locations = list(executor.map(lambda item: get_location(item["link"]), items))
 
