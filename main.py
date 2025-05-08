@@ -15,9 +15,9 @@ from dotenv import load_dotenv
 
 app = Flask(__name__)
 load_dotenv()
-card_list = []
 init_car_db()
 init_user_db()
+card_list = []
 
 def add_unique_results(results, target_list):
     for result in results:
@@ -106,7 +106,7 @@ def run_combined_search(s_search, price_low, price_high):
     blocket_results = blocket_scrape_simple(s_search)
     tradera_results = tradera_scrape(s_search)
     kvd_results = kvd_scrape_simple(s_search)
-    
+
     add_unique_results(blocket_results, temp_card_list)
     add_unique_results(tradera_results, temp_card_list)
     add_unique_results(kvd_results, temp_card_list)
