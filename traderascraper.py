@@ -1,6 +1,6 @@
 from concurrent.futures import ThreadPoolExecutor
 from bs4 import BeautifulSoup
-from db import generate_token, save_new_token_if_unseen
+from db import generate_token_tradera, save_new_token_if_unseen
 import requests
 
 card_list = []
@@ -25,7 +25,8 @@ def tradera_scrape(brand):
     items = []
     
     for pris in tradera_priser:
-        token = generate_token(pris)
+        
+        
         
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
@@ -34,7 +35,8 @@ def tradera_scrape(brand):
         img_url = srcset.split(",")[0].strip().split(" ")[0] if srcset else ""
         link = "https://www.tradera.com" + parent["href"]
         title = parent["title"]
-    
+        token = generate_token_tradera(pris_clean, title)
+        print(token + "tradera")
         items.append({
                 "title": title,
                 "pris": pris_clean,
@@ -65,7 +67,8 @@ def tradera_scrape_single_thread(brand):
     
     for pris in tradera_priser:
         
-        token = generate_token(pris)
+        
+        
 
         parent = pris.find_parent("div", {"class": "item-card-inner-wrapper"}).find("a")
         pris_clean = pris.text 
@@ -75,7 +78,7 @@ def tradera_scrape_single_thread(brand):
         link = "https://www.tradera.com" + parent["href"]
         title = parent["title"]
         
-        
+        token = generate_token_tradera(pris_clean, title)
 
         loc_link = requests.get(link)
         loc_soup = BeautifulSoup(loc_link.text, "html.parser")

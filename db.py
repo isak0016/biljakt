@@ -7,8 +7,16 @@ from datetime import datetime
 CAR_DB_PATH = "seen_items.db"
 USER_DB_PATH = "mail_list.db"
 
-def generate_token(x):
+def generate_token_blocket(x):
     raw = x.get("subject", "") + x.get("share_url", "")
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def generate_token_tradera(pris, title):
+    raw = pris + title
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def generate_token_kvd(subtitle, title):
+    raw = subtitle + title
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 def save_new_user_if_unseen(email, search_words):

@@ -1,5 +1,5 @@
 from blocket_api import BlocketAPI, Region
-from db import generate_token, save_new_token_if_unseen
+from db import generate_token_blocket, save_new_token_if_unseen
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -18,7 +18,7 @@ def blocket_scrape_advanced(make_search, fuel_search, chassi_search, price_low, 
         
     try:
         for x in search_result['cars']:
-            token = generate_token(x)
+            token = generate_token_blocket(x)
             
             title = x.get('heading', '')
             pris = x.get('price', {}).get('amount', '')
@@ -55,8 +55,8 @@ def blocket_scrape_simple(s_search):
     search_results = api.custom_search(s_search)
 
     for x in search_results['data']:
-        token = generate_token(x)
-
+        token = generate_token_blocket(x)
+        print(token + "blocket")
         title = x.get('subject', '')
         pris = x.get('price', {}).get('value', '')
         link = x.get('share_url', '')

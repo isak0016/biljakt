@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
-from db import generate_token, save_new_token_if_unseen
+from db import generate_token_kvd, save_new_token_if_unseen
 import requests
 import time
 
@@ -56,8 +56,7 @@ def kvd_scrape_simple(brand):
     cards = soup.find_all("a", {"data-testid": "product-card"})
 
     for card in cards:
-        token = generate_token(card)
-            
+        
         title_tag = card.find("p", {"class": "Title__Container-sc-1pnhtgy-0 dUjCyV"})
         subtitle_tag = card.find("p", {"class": "Subtitle__Container-sc-mtvkrl-0 dQIixS"})
         #price_tag = card.find("span", {"class": "FinancingRowItem__PriceValue-sc-t6ke1g-2 epRKgX"})
@@ -74,6 +73,9 @@ def kvd_scrape_simple(brand):
         img_url = img_tag.get("src")
         link = "https://www.kvd.se" + card.get("href")
 
+        token = generate_token_kvd(link, img_url)
+        print(token + "kvd")
+
         card_list.append({
             "title": title_tag.text + ", " + subtitle_tag.text,
             "pris": price_tag.text.strip(),
@@ -82,7 +84,7 @@ def kvd_scrape_simple(brand):
             "token": token
         })
 
-        save_new_token_if_unseen(token, title_tag, link)
+        save_new_token_if_unseen(token, title_tag.text, link)
     driver.quit()
     return card_list
 
@@ -123,11 +125,9 @@ def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
 
     for card in cards:
         
-        token = generate_token(card)
 
         title_tag = card.find("p", {"class": "Title__Container-sc-1pnhtgy-0 dUjCyV"})
         subtitle_tag = card.find("p", {"class": "Subtitle__Container-sc-mtvkrl-0 dQIixS"})
-        #price_tag = card.find("span", {"class": "FinancingRowItem__PriceValue-sc-t6ke1g-2 epRKgX"})
         price_tag = card.find("span", string=lambda s: s and "kr" in s)
         img_tag = card.find("img", {"class" : "styles__LazyImg-sc-1tncjpw-2 bEPGnb media__image"})
         img_url = None
@@ -140,6 +140,9 @@ def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
         img_url = img_tag.get("src")
         link = "https://www.kvd.se" + card.get("href")
 
+        token = generate_token_kvd(subtitle_tag.text, title_tag.text)
+        print(token + "kvd")
+
         card_list.append({
             "title": title_tag.text + ", " + subtitle_tag.text,
             "pris": price_tag.text.strip(),
@@ -148,6 +151,6 @@ def kvd_scrape_advanced(make_search, fuel_search, price_low, price_high):
             "token": token
         })
 
-        save_new_token_if_unseen(token, title_tag, link)
+        save_new_token_if_unseen(token, title_tag.text, link)
     driver.quit()
     return card_list
