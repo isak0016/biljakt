@@ -8,7 +8,7 @@ CAR_DB_PATH = "seen_items.db"
 USER_DB_PATH = "mail_list.db"
 
 def generate_token_blocket(x):
-    raw = x.get("subject", "") + x.get("share_url", "")
+    raw = x.get("subject", "") + x.get("share_url", "") 
     return hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
 def generate_token_tradera(pris, title):
